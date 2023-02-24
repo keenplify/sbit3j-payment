@@ -5,7 +5,6 @@ export default function Home() {
       <p
         style={{
           color: "green",
-          backgroundColor: "blue"
         }}
       >
         <b>Server URL:</b> {process.env.NEXT_PUBLIC_SERVER_URL}
