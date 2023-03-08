@@ -1,3 +1,11 @@
 button {
     color: green
 }
+
+.accordion-button.collapsed::after {
+    content: none;
+} */
+
+.accordion-button:not(.collapsed)::after {
+    content: none;
+}
