@@ -1,11 +1,7 @@
-button {
-    color: green
+.accordion-button::after{
+    display: none;
 }
 
-.accordion-button.collapsed::after {
-    content: none;
-} */
-
-.accordion-button:not(.collapsed)::after {
-    content: none;
+.accordion-button{
+    display: block;
 }
