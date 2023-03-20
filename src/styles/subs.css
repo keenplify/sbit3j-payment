@@ -1,0 +1,34 @@
+.Sub {
+    background-color: white; 
+    text-align: left center;
+  
+  }
+  
+  .Active {
+    text-align: center;
+    color: green;
+  }
+  
+  .Expired {
+    text-align: center;
+    color: gray;
+  }
+  
+  .Category1 {
+    text-align: center;
+    color:blue;
+    border-radius: 25px;
+    border: 2px solid rgb(219, 209, 209);
+    border-radius: 12px;
+    padding: 5px;
+  }
+  
+  .Category2 {
+    text-align: center;
+    color:blue;
+    border-radius: 25px;
+    border: 2px solid rgb(219, 209, 209);
+    border-radius: 12px;
+    padding: 5px;
+  }
+  
