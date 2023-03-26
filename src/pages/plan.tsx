@@ -1,9 +1,30 @@
 import Link from "next/link";
 import { useState } from "react";
 
+
 export default function Plan() {
     const [selected, setSelected] = useState("");
+    const [submitDisabled, setsubmitDisabled] = useState(true);
+  
+    
+    const handleRadioChange1 = () => {
+        setSelected("basic");
+        setsubmitDisabled(false);
+      };
+
+      const handleRadioChange2 = () => {
+        setSelected("plus");
+        setsubmitDisabled(false);
+      };
+
+      const handleRadioChange3 = () => {
+        setSelected("gold");
+        setsubmitDisabled(false);
+      };
+
+     
     return (
+        
         <div>
             <div className="d-flex position-relative">
                 <div>
@@ -31,13 +52,17 @@ export default function Plan() {
                 <div className="accordion-item m-4 shadow bg-body rounded-4">
                     <h2 className="accordion-header " id="headingOne">
                         <button
+                            
                             className="accordion-button rounded-4"
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#collapseOne"
                             aria-expanded="false"
                             aria-controls="collapseOne"
-                            onClick={() => setSelected("basic")}
+                            // onClick={() => setSelected("basic")}
+                            onClick={handleRadioChange1}
+                            value="basic"
+
                             style={
                                 selected === "basic"
                                     ? {
@@ -47,6 +72,7 @@ export default function Plan() {
                                       }
                                     : undefined
                             }
+                           
                         >
                             <div className="d-flex justify-content-between">
                                 <div>
@@ -75,7 +101,7 @@ export default function Plan() {
                         <div className="accordion-body">
                             <strong>
                                 This is the first item's accordion body.
-                            </strong>{" "}
+                            </strong>{""}
                             It is shown by default, until the collapse plugin
                             adds the appropriate classNamees that we use to
                             style each element. These classNamees control the
@@ -86,6 +112,8 @@ export default function Plan() {
                             any HTML can go within the{" "}
                             <code>.accordion-body</code>, though the transition
                             does limit overflow.
+                            <br></br>
+
                         </div>
                     </div>
                 </div>
@@ -99,7 +127,9 @@ export default function Plan() {
                             data-bs-target="#collapseTwo"
                             aria-expanded="false"
                             aria-controls="collapseTwo"
-                            onClick={() => setSelected("plus")}
+                            // onClick={() => setSelected("plus")}
+                            onClick={handleRadioChange2}
+                            value="plus"
                             style={
                                 selected === "plus"
                                     ? {
@@ -160,7 +190,9 @@ export default function Plan() {
                             data-bs-target="#collapseThree"
                             aria-expanded="false"
                             aria-controls="collapseThree"
-                            onClick={() => setSelected("gold")}
+                            // onClick={() => setSelected("gold")}
+                            onClick={handleRadioChange3}
+                            value="gold"
                             style={
                                 selected === "gold"
                                     ? {
@@ -211,12 +243,17 @@ export default function Plan() {
                         </div>
                     </div>
                 </div>
-                <div className="d-grid m-4 pb-3">
-                    <button className="btn btn-primary  p-3" type="button">
-                        GET STARTED
+                <div className="d-grid m-4 pb-3"> 
+                    {
+                       
+                    <button className="btn btn-primary  p-3"  type="submit" disabled={submitDisabled} >                        
+                       GET STARTED                       
                     </button>
+                    }
+                      <p>Selected Button: {selected}</p>
                 </div>
             </div>
         </div>
+       
     );
 }
