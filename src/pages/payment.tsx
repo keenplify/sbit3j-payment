@@ -25,31 +25,29 @@ export default function Payment() {
   className="accordion-item mb-4 rounded-2 shadow bg-body rounded"
   onClick={() => setSelected("credit")}
   style={{
-    width: "362px", height: "82px",  margin: "0 auto",
+    width: "362px", height: "82px", margin: "0 auto", 
     ...(selected === "credit" ? { borderColor: "black", border: "solid 1px" } : undefined)
   }}
 >
-<div style={{ textAlign: "center" }}>
- 
-    <button
-      type="button"
-      className="btn btn-outline-hidden"
-      data-bs-toggle="modal"
-      data-bs-target="#basicModal"
-      style={{ width: "100%", height: "px" }}
-    >
-      <img
-        src="/card.png"
-        className="img-thumbnail"
-        alt="..."
-        width="50"
-        height="50"
-        style={{ border: 0 }}
-      />
-      Credit / Debit Card
-    </button>
-
-</div>
+<div className="card-body">
+            <button
+              type="button"
+              className="btn btn-outline-hidden"
+              data-bs-toggle="modal"
+              data-bs-target="#basicModal"
+              style={{ width: "100%", height: "82px" }}
+            >
+              <img
+                src="/card.png"
+                className="img-thumbnail"
+                alt="..."
+                width="50"
+                height="50"
+                style={{ border: 0 }}
+              />
+              Credit / Debit Card
+            </button>
+          </div>
           <div className="modal fade" id="basicModal">
             <div className="modal-dialog">
               <div className="modal-content">
