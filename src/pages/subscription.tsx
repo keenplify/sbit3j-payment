@@ -95,7 +95,6 @@ export default function Subscription() {
     <div className="cell">Feb. 20, 2023</div>
     <div className="cell">March 20, 2023</div>
   </div>
-  
 </div>
    </div>
   );
