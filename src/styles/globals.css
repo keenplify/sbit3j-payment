@@ -1,4 +1,158 @@
 
+.accordion-button::after{
+    display: none;
+}
+
+.accordion-button{
+    display: block;
+}
+
+.Sub .h3{
+  background-color: rgb(255, 255, 255); 
+  text-align: left center;
+  font-size: 250%;
+  align-items: center;
+  border-radius: 10px;
+  padding-bottom: 50px;
+}
+
+.Sub > input {
+  border: none;
+  outline: none;
+  background-color: rgb(206, 209, 208);
+  border-radius: 10px; 
+  margin-bottom: 5px;
+}
+
+.Active {
+  text-align: center;
+  color: rgb(44, 218, 44);
+  font-size: small;
+  margin-bottom: 10px;
+}
+
+.Expired {
+  text-align: center;
+  color: gray;
+  margin-top: 25px;
+  font-size: small;
+  margin-bottom: 10px;
+}
+
+.table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Calibri, sans-serif;
+  background-color: #e7e7e7;
+  font-weight: bold;
+  font-size: small;
+  text-align: center;
+  align-self: center;  
+  border-radius: 10px; /* Added a border-radius of 10 pixels */
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5); /* Added a shadow to the bottom border */
+  margin-bottom: 10px;
+}
+
+.table2 {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  align-self: center;
+  border-radius: 10px; /* Added a border-radius of 10 pixels */
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5); /* Added a shadow to the bottom border */
+}
+
+.row {
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+  padding: 5px;
+  font-size: 100%;
+  
+}
+
+.cell2 {
+  display: table-cell;
+  padding: 5px;
+  color: gold;
+  font-size: 200%;
+  font-style: italic;
+}
+
+.cell1 {
+  display: table-cell;
+  padding: 5px;
+  color: black;
+  font-size: 200%;
+  font-style: italic;
+}
+
+.cell3 {
+  display: table-cell;
+  padding: 5px;
+  color: black;
+  font-size:200%;
+  font-style: italic;
+}
+
+.cell4 {
+  display: table-cell;
+  padding: 5px;
+  color: rgb(33, 33, 131);
+  font-size: 150%;
+}
+
+.blue {
+  font-family: Calibri, sans-serif;
+  font-weight: bold;
+  color: blue;
+  font-size: small;
+}
+
+/* First row */
+.row:first-child .cell {
+
+  border-radius: 10px; /* Added a border-radius of 10 pixels */
+}
+
+/* Last row */
+.row:last-child .cell {
+
+  border-radius: 10px; /* Added a border-radius of 10 pixels */
+}
+
+/* First column */
+.cell:first-child {
+  border-radius: 10px; /* Added a border-radius of 10 pixels */
+}
+
+/* Last column */
+.cell:last-child {
+
+  border-radius: 10px; /* Added a border-radius of 10 pixels */
+}
+.close-button {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  cursor: pointer;
+}
+
+.close-button:before,
+.close-button:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 16px;
+  background-color: black;
+}
+
 .close-button:before {
   transform: translate(-50%, -50%) rotate(45deg);
 }
