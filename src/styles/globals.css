@@ -1,4 +1,10 @@
+.accordion-button::after{
+    display: none;
+}
 
+.accordion-button{
+    display: block;
+}
 .Sub .h3{
   background-color: rgb(255, 255, 255); 
   text-align: left center;
@@ -15,8 +21,6 @@
   border-radius: 10px; 
   margin-bottom: 5px;
 }
-
-
 
 .Active {
   text-align: center;
@@ -69,7 +73,6 @@
   
 }
 
-
 .cell2 {
   display: table-cell;
   padding: 5px;
@@ -84,8 +87,6 @@
   color: black;
   font-size: 200%;
   font-style: italic;
-    font-style: italic;
-  
 }
 
 .cell3 {
@@ -94,7 +95,6 @@
   color: black;
   font-size:200%;
   font-style: italic;
-  
 }
 
 .cell4 {
@@ -103,7 +103,6 @@
   color: rgb(33, 33, 131);
   font-size: 150%;
 }
-
 
 .blue {
   font-family: Calibri, sans-serif;
