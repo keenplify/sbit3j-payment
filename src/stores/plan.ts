@@ -16,7 +16,7 @@ export const usePlanStore = create(
         }))
       }),
       {
-        name: 'sbit3j-plan'
+        name: 'sbit3j-plan',
       }
     )
   )

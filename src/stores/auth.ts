@@ -18,7 +18,8 @@ export const useAuthStore = create(
         }))
       }),
       {
-        name: 'sbit3j-payment-auth'
+        name: 'sbit3j-payment-auth',
+        
       }
     )
   )
