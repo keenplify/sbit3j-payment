@@ -9,6 +9,8 @@ import axios from "axios";
 import { PAYMONGO_PUBLIC_KEY } from "../config/paymongo";
 import { useRouter } from "next/router";
 import { PaymongoPaymentMethodResponse } from "@/types/paymongo";
+import { toast } from 'react-toastify';
+import { useAuthStore } from "@/stores/auth";
 
 const schema = z.object({
   fullName: z.string().min(1, { message: "Required" }),
@@ -62,17 +64,13 @@ export default function Payment() {
     },
   });
   const router = useRouter();
-
+  const {token} = useAuthStore()
   const { selectedId: selectedProductId } = router.query;
-  const [data, setData] = useState("");
   const [cardPage, setCardPage] = useState<number>();
-  const [cardResults, setCardResults] = useState<CardSchema>();
   const [isCardSubmitting, setIsCardSubmitting] = useState(false);
   const [selected, setSelected] = useState<"card" | "gcash" | "maya">("card");
   const [paymentMethodResponse, setPaymentMethodResponse] =
     useState<PaymongoPaymentMethodResponse>();
-
-  const [title, setTitle] = useState();
 
   useEffect(() => {
     trigger();
@@ -80,7 +78,6 @@ export default function Payment() {
 
   const submitCard = handleSubmit(
     async (data) => {
-      setCardResults(data);
       setCardPage(undefined);
       setIsCardSubmitting(true);
 
@@ -122,6 +119,8 @@ export default function Payment() {
 
         setPaymentMethodResponse(result.data);
       } catch (error) {
+        console.warn(error)
+        toast.error("Cannot create card")
       } finally {
         setIsCardSubmitting(false);
       }
@@ -130,6 +129,50 @@ export default function Payment() {
       console.log("error", e);
     }
   );
+
+  async function handleOnlinePayment(type: 'gcash' | 'paymaya') {
+    try {
+      const result = await axios.post<PaymongoPaymentMethodResponse>(
+        "https://api.paymongo.com/v1/payment_methods",
+        {
+          data: {
+            attributes: {
+              type,
+            },
+          },
+        },
+        {
+          headers: {
+            Authorization: `Basic ${btoa(PAYMONGO_PUBLIC_KEY)}`,
+          },
+        }
+      );
+
+      setPaymentMethodResponse(result.data);
+    } catch (error) {
+      console.warn(error)
+      toast.error("Unable to use online payment")
+    }
+  }
+
+  async function handleConfirm() {
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/initialize`, {
+        subscriptionProductId: Number.parseInt(`${selectedProductId}`),
+        paymentMethodId: paymentMethodResponse?.data.id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      })
+
+      toast.success("Payment Successful")
+      router.push("/subscription")
+    } catch (error) {
+      console.warn(error)
+      toast.error("Cannot proceed to payment")
+    }
+  }
 
   return (
     <div>
@@ -478,7 +521,10 @@ export default function Payment() {
         {/* Gcash */}
         <div
           className="accordion-item mb-4 rounded-2 shadow bg-body rounded"
-          onClick={() => setSelected("gcash")}
+          onClick={() => {
+            setSelected("gcash")
+            handleOnlinePayment('gcash')
+          }}
           style={
             selected === "gcash"
               ? { borderColor: "black", border: "solid 1px" }
@@ -510,7 +556,10 @@ export default function Payment() {
         {/* Maya */}
         <div
           className="accordion-item rounded-2 shadow bg-body rounded"
-          onClick={() => setSelected("maya")}
+          onClick={() => {
+            setSelected("maya")
+            handleOnlinePayment('paymaya')
+          }}
           style={
             selected === "maya"
               ? { borderColor: "black", border: "solid 1px" }
@@ -541,13 +590,9 @@ export default function Payment() {
       </div>
 
       <div className="m-4 d-grid gap-2">
-        <button className="btn btn-primary p-3" type="button">
+        <button className="btn btn-primary p-3" type="button" onClick={handleConfirm} disabled={!paymentMethodResponse || !selectedProductId || isCardSubmitting}>
           Confirm Payment Method
         </button>
-      </div>
-      <div className="m-4 card">
-        <p>{data}</p>
-        <p>Selected Button: {selected}</p>
       </div>
     </div>
   );
