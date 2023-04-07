@@ -2,7 +2,7 @@ import { useQuery } from 'react-query'
 import Link from "next/link";
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
-import { SubscriptionResponse } from '@/types/subscription';
+import { Subscription, SubscriptionResponse } from '@/types/subscription';
 import dayjs from 'dayjs';
 
 export default function Subscription() {
@@ -19,7 +19,7 @@ export default function Subscription() {
   const { data } = useQuery('subscriptions', fetchSubscriptions)
 
   // https://day.js.org/docs/en/display/format#docsNav
-  
+
   return (
     <div>
       <div className="m-4">
@@ -37,10 +37,7 @@ export default function Subscription() {
 
         {
           data?.data.data.map((subscription, key) => (
-            <div key={key}>
-              {subscription.id}
-              {dayjs(subscription.startAt).format('MMM D, YYYY h:mm A')}
-            </div>
+            <Card key={key} subscription={subscription}/>
           ))
         }
 
@@ -66,21 +63,23 @@ export default function Subscription() {
 
         <p className="text-success text-center">Active</p>
 
-        <Card />
+        
         {/* <div className="form-floating mb-3">
           <p className="form-control-plaintext"></p>
           <label htmlFor="floatingEmptyPlaintextInput">Expired</label>
         </div> */}
 
         <p className="text-center">Expired</p>
-
-        <Card />
       </div>
     </div>
   );
 }
 
-function Card() {
+interface CardProps {
+  subscription: Subscription
+}
+
+function Card({subscription}: CardProps) {
   return (
     <div className="card mb-3">
       <div className="row">

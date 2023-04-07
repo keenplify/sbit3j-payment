@@ -11,4 +11,5 @@ endAt: string
 clientId: number
 createdAt: string
 updatedAt: string
+isActive: boolean
 }
