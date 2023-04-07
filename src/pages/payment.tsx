@@ -9,7 +9,7 @@ import axios from "axios";
 import { PAYMONGO_PUBLIC_KEY } from "../config/paymongo";
 import { useRouter } from "next/router";
 import { PaymongoPaymentMethodResponse } from "@/types/paymongo";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { useAuthStore } from "@/stores/auth";
 
 const schema = z.object({
@@ -64,7 +64,7 @@ export default function Payment() {
     },
   });
   const router = useRouter();
-  const {token} = useAuthStore()
+  const { token } = useAuthStore();
   const { selectedId: selectedProductId } = router.query;
   const [cardPage, setCardPage] = useState<number>();
   const [isCardSubmitting, setIsCardSubmitting] = useState(false);
@@ -119,8 +119,8 @@ export default function Payment() {
 
         setPaymentMethodResponse(result.data);
       } catch (error) {
-        console.warn(error)
-        toast.error("Cannot create card")
+        console.warn(error);
+        toast.error("Cannot create card");
       } finally {
         setIsCardSubmitting(false);
       }
@@ -130,7 +130,7 @@ export default function Payment() {
     }
   );
 
-  async function handleOnlinePayment(type: 'gcash' | 'paymaya') {
+  async function handleOnlinePayment(type: "gcash" | "paymaya") {
     try {
       const result = await axios.post<PaymongoPaymentMethodResponse>(
         "https://api.paymongo.com/v1/payment_methods",
@@ -150,27 +150,31 @@ export default function Payment() {
 
       setPaymentMethodResponse(result.data);
     } catch (error) {
-      console.warn(error)
-      toast.error("Unable to use online payment")
+      console.warn(error);
+      toast.error("Unable to use online payment");
     }
   }
 
   async function handleConfirm() {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/initialize`, {
-        subscriptionProductId: Number.parseInt(`${selectedProductId}`),
-        paymentMethodId: paymentMethodResponse?.data.id
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/initialize`,
+        {
+          subscriptionProductId: Number.parseInt(`${selectedProductId}`),
+          paymentMethodId: paymentMethodResponse?.data.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
+      );
 
-      toast.success("Payment Successful")
-      router.push("/subscription")
+      toast.success("Payment Successful");
+      router.push("/subscription");
     } catch (error) {
-      console.warn(error)
-      toast.error("Cannot proceed to payment")
+      console.warn(error);
+      toast.error("Cannot proceed to payment");
     }
   }
 
@@ -253,7 +257,9 @@ export default function Payment() {
                       required
                     />
                     {errors.fullName?.message && (
-                      <p>{errors.fullName?.message}</p>
+                      <p className="validationMessage">
+                        {errors.fullName?.message}
+                      </p>
                     )}
                     <div className="row">
                       <div className="col">
@@ -267,7 +273,9 @@ export default function Payment() {
                           {...register("email", { required: true })}
                         />
                         {errors.email?.message && (
-                          <p>{errors.email?.message}</p>
+                          <p className="validationMessage">
+                            {errors.email?.message}
+                          </p>
                         )}
                       </div>
                       <div className="col">
@@ -281,37 +289,43 @@ export default function Payment() {
                           {...register("phone", { required: true })}
                         />
                         {errors.phone?.message && (
-                          <p>{errors.phone?.message}</p>
+                          <p className="validationMessage">
+                            {errors.phone?.message}
+                          </p>
                         )}
                       </div>
                     </div>
                     <div className="row">
                       <div className="col">
-                        <span>UNIT NO./STREET</span>
+                        <span>LINE 1</span>
                         <input
                           type="text"
                           className="form-control"
-                          placeholder=""
+                          placeholder="Unit No. / Street"
                           aria-label="line1"
                           aria-describedby="address"
                           {...register("line1", { required: true })}
                         />
                         {errors.line1?.message && (
-                          <p>{errors.line1?.message}</p>
+                          <p className="validationMessage">
+                            {errors.line1?.message}
+                          </p>
                         )}
                       </div>
                       <div className="col">
-                        <span>BARANGAY</span>
+                        <span>LINE 2</span>
                         <input
                           type="text"
                           className="form-control"
-                          placeholder=""
+                          placeholder="Barangay"
                           aria-label="line2"
                           aria-describedby="address"
                           {...register("line2", { required: true })}
                         />
                         {errors.line2?.message && (
-                          <p>{errors.line2?.message}</p>
+                          <p className="validationMessage">
+                            {errors.line2?.message}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -326,20 +340,43 @@ export default function Payment() {
                           aria-describedby="address"
                           {...register("city", { required: true })}
                         />
-                        {errors.city?.message && <p>{errors.city?.message}</p>}
+                        {errors.city?.message && (
+                          <p className="validationMessage">
+                            {errors.city?.message}
+                          </p>
+                        )}
                       </div>
                       <div className="col">
                         <span>STATE/REGION</span>
-                        <input
-                          type="string"
-                          className="form-control"
-                          placeholder="ex. NCR"
-                          aria-label="state"
-                          aria-describedby="address"
+                        <select
+                          className="form-select"
                           {...register("state", { required: true })}
-                        />
+                        >
+                          <option value="" disabled>
+                            Select Region
+                          </option>
+                          <option value="Region I ">Region I </option>
+                          <option value="Region II ">Region II </option>
+                          <option value="Region III ">Region III </option>
+                          <option value="Region IV‑A">Region IV‑A</option>
+                          <option value="MIMAROPA ">MIMAROPA </option>
+                          <option value="Region V ">Region V </option>
+                          <option value="Region VI">Region VI</option>
+                          <option value="Region VII">Region VII</option>
+                          <option value="Region VIII">Region VIII</option>
+                          <option value="Region IX ">Region IX </option>
+                          <option value="Region X ">Region X </option>
+                          <option value="Region XI">Region XI</option>
+                          <option value="Region XII ">Region XII </option>
+                          <option value="Region XIII ">Region XIII </option>
+                          <option value="NCR ">NCR </option>
+                          <option value="CAR ">CAR </option>
+                          <option value="BARMM">BARMM</option>
+                        </select>
                         {errors.state?.message && (
-                          <p>{errors.state?.message}</p>
+                          <p className="validationMessage">
+                            {errors.state?.message}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -355,7 +392,9 @@ export default function Payment() {
                           {...register("postalCode", { required: true })}
                         />
                         {errors.postalCode?.message && (
-                          <p>{errors.postalCode?.message}</p>
+                          <p className="validationMessage">
+                            {errors.postalCode?.message}
+                          </p>
                         )}
                       </div>
                       <div className="col">
@@ -368,9 +407,9 @@ export default function Payment() {
                           readOnly
                           {...register("country", { required: true })}
                         />
-                        {errors.country?.message && (
+                        {/* {errors.country?.message && (
                           <p>{errors.country?.message}</p>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </div>
@@ -390,7 +429,9 @@ export default function Payment() {
                       {...register("cardNumber", { required: true })}
                     />
                     {errors.cardNumber?.message && (
-                      <p>{errors.cardNumber?.message}</p>
+                      <p className="validationMessage">
+                        {errors.cardNumber?.message}
+                      </p>
                     )}
                     <div className="row">
                       <div className="col">
@@ -408,7 +449,9 @@ export default function Payment() {
                           })}
                         />
                         {errors.expMonth?.message && (
-                          <p>{errors.expMonth?.message}</p>
+                          <p className="validationMessage">
+                            {errors.expMonth?.message}
+                          </p>
                         )}
                       </div>
                       <div className="col">
@@ -422,7 +465,9 @@ export default function Payment() {
                           {...register("expYear", { required: true })}
                         />
                         {errors.expYear?.message && (
-                          <p>{errors.expYear?.message}</p>
+                          <p className="validationMessage">
+                            {errors.expYear?.message}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -435,7 +480,9 @@ export default function Payment() {
                       aria-describedby="button-addon1"
                       {...register("cvc", { required: true })}
                     />
-                    {errors.cvc?.message && <p>{errors.cvc?.message}</p>}
+                    {errors.cvc?.message && (
+                      <p className="validationMessage">{errors.cvc?.message}</p>
+                    )}
                   </div>
                   <div className="modal-footer">
                     {cardPage === 1 ? (
@@ -522,8 +569,8 @@ export default function Payment() {
         <div
           className="accordion-item mb-4 rounded-2 shadow bg-body rounded"
           onClick={() => {
-            setSelected("gcash")
-            handleOnlinePayment('gcash')
+            setSelected("gcash");
+            handleOnlinePayment("gcash");
           }}
           style={
             selected === "gcash"
@@ -557,8 +604,8 @@ export default function Payment() {
         <div
           className="accordion-item rounded-2 shadow bg-body rounded"
           onClick={() => {
-            setSelected("maya")
-            handleOnlinePayment('paymaya')
+            setSelected("maya");
+            handleOnlinePayment("paymaya");
           }}
           style={
             selected === "maya"
@@ -590,7 +637,14 @@ export default function Payment() {
       </div>
 
       <div className="m-4 d-grid gap-2">
-        <button className="btn btn-primary p-3" type="button" onClick={handleConfirm} disabled={!paymentMethodResponse || !selectedProductId || isCardSubmitting}>
+        <button
+          className="btn btn-primary p-3"
+          type="button"
+          onClick={handleConfirm}
+          disabled={
+            !paymentMethodResponse || !selectedProductId || isCardSubmitting
+          }
+        >
           Confirm Payment Method
         </button>
       </div>
