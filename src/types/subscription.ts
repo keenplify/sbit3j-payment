@@ -11,4 +11,8 @@ endAt: string // End
 clientId: number
 createdAt: string
 updatedAt: string
+
+title : string // Type
+price : string // Price
+isActive : boolean // Status
 }
