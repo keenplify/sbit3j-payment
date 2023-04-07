@@ -4,8 +4,6 @@ import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import { SubscriptionResponse } from "@/types/subscription";
 import dayjs from "dayjs";
-import { useState } from "react";
-import { NumericFormat } from "react-number-format";
 
 export default function Subscription() {
   const { token } = useAuthStore();
@@ -25,8 +23,6 @@ export default function Subscription() {
 
   // https://day.js.org/docs/en/display/format#docsNav
 
-  console.log(refetch);
-
   return (
     <div>
       <div className="m-4">
@@ -42,20 +38,60 @@ export default function Subscription() {
       <div className="m-4">
         <h1>Subscription</h1>
 
-        <div style={{ textAlign: "right" }}>
-          <button
-            className="btn btn-primary me-2"
-            type="submit"
-            onClick={() => refetch()}
-          >
-            FETCH
-          </button>
+        {data?.data.data.map((subscription, key) => (
+          <div key={key}>
+            {subscription.id}
+            {dayjs(subscription.startAt).format("MMM D, YYYY h:mm A")}
+          </div>
+        ))}
 
-          <Link href="/plan">
-            <button className="btn btn-primary" type="submit">
-              ADD
-            </button>
-          </Link>
+        {/* <div className="input-group mb-3">
+          <span className="input-group-text" id="basic-addon1">
+            @
+          </span>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search Subscription"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div> */}
+
+        {/* <div className="form-floating">
+          <p className="form-control-plaintext"></p>
+          <label htmlFor="floatingEmptyPlaintextInput" className="text-success">
+            Active
+          </label>
+        </div> */}
+
+        <p className="text-success text-center">Active</p>
+
+        <Card />
+        {/* <div className="form-floating mb-3">
+          <p className="form-control-plaintext"></p>
+          <label htmlFor="floatingEmptyPlaintextInput">Expired</label>
+        </div> */}
+
+        <p className="text-center">Expired</p>
+
+        <Card />
+      </div>
+    </div>
+  );
+}
+
+function Card() {
+  return (
+    <div className="card mb-3">
+      <div className="row">
+        <div className="col-3">
+          <div className="form-floating">
+            <h6 className="form-control-plaintext">BASIC</h6>
+            <label htmlFor="floatingPlaintextInput" className="text-primary">
+              Type
+            </label>
+          </div>
         </div>
 
         <div className="table-responsive mt-4">
