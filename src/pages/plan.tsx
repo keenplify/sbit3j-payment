@@ -1,16 +1,20 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useState } from "react";
+import axios from "axios";
+import { usePlanStore } from "../stores/plan";
 
 export default function Plan() {
-  const [selected, setSelected] = useState("");
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [selectedId, setSelectedId] = useState(1);
+  console.log(selectedId);
 
   const checkButtons1 = () => {
     const buttons = document.querySelectorAll("button[aria-expanded]");
     for (let button of buttons) {
       if (button.getAttribute("aria-expanded") === "true") {
         setIsSubmitDisabled(false);
-        setSelected("basic");
+        setSelectedId(1);
         return;
       }
     }
@@ -22,7 +26,7 @@ export default function Plan() {
     for (let button of buttons) {
       if (button.getAttribute("aria-expanded") === "true") {
         setIsSubmitDisabled(false);
-        setSelected("plus");
+        setSelectedId(2);
         return;
       }
     }
@@ -34,7 +38,7 @@ export default function Plan() {
     for (let button of buttons) {
       if (button.getAttribute("aria-expanded") === "true") {
         setIsSubmitDisabled(false);
-        setSelected("bold");
+        setSelectedId(3);
         return;
       }
     }
@@ -459,13 +463,20 @@ export default function Plan() {
               type="submit"
               disabled={isSubmitDisabled}
             >
-              <Link href="/payment">
+              <Link
+                href={{
+                  pathname: "/payment",
+                  query: {
+                    selectedId,
+                  },
+                }}
+              >
                 {" "}
                 <span className="text-white"> GET STARTED </span>
               </Link>
             </button>
           }
-          <p>Selected Button: {selected}</p>
+          <p>Selected Button: {selectedId}</p>
         </div>
       </div>
     </div>

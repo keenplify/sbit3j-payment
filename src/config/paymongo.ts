@@ -1,0 +1,1 @@
+export const PAYMONGO_PUBLIC_KEY = "pk_test_DjB9Z7P92BfHdiidueTh3B5z" as const
