@@ -12,7 +12,7 @@ export default function Subscription() {
 
   async function fetchSubscriptions() {
     return await axios.get<SubscriptionResponse>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/global/subscription-products`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -24,8 +24,6 @@ export default function Subscription() {
   const { data, refetch } = useQuery("subscriptions", fetchSubscriptions);
 
   // https://day.js.org/docs/en/display/format#docsNav
-
-  console.log(refetch);
 
   return (
     <div>
@@ -51,10 +49,8 @@ export default function Subscription() {
             FETCH
           </button>
 
-          <Link href="/plan">
-            <button className="btn btn-primary" type="submit">
-              ADD
-            </button>
+          <Link href="/plan" className="btn btn-primary">
+            ADD
           </Link>
         </div>
 
@@ -69,13 +65,13 @@ export default function Subscription() {
                 <th scope="col">Status</th>
               </tr>
             </thead>
-            {data?.data.data.map((subscription, key) => (
-              <tbody className="table-group-divider" key={key}>
-                <tr>
-                  <th scope="row">{subscription.title}</th>
+            <tbody>
+              {data?.data.data.map((subscription, key) => (
+                <tr key={key}>
+                  <th scope="row">{subscription.subscriptionProduct.title}</th>
                   <td>
                     <NumericFormat
-                      value={subscription.price}
+                      value={subscription.subscriptionProduct.price}
                       displayType={"text"}
                       thousandSeparator={true}
                       prefix={"₱"}
@@ -86,8 +82,8 @@ export default function Subscription() {
                   <td>{dayjs(subscription.endAt).format("M/D/YYYY")}</td>
                   <td>{subscription.isActive ? "Active" : "Inactive"}</td>
                 </tr>
-              </tbody>
-            ))}
+              ))}
+            </tbody>
           </table>
         </div>
       </div>

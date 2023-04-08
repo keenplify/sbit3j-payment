@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { PaymongoPaymentMethodResponse } from "@/types/paymongo";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/stores/auth";
+import { SubscriptionInitializeResponse } from "@/types/subscription";
 
 const schema = z.object({
   fullName: z.string().min(1, { message: "Required" }),
@@ -34,18 +35,24 @@ const schema = z.object({
     .refine(validator.isCreditCard, {
       message: "A valid Card Number is Required",
     }),
-  expMonth: z.string().refine((v) => {
-    const month = Number.parseInt(v);
-    if (month < 1) return false;
-    if (month > 12) return false;
-    return true;
-  }, "Must be a valid month"),
-  expYear: z.string().refine((v) => {
-    const year = Number.parseInt(v);
-    const currentYear = new Date().getFullYear();
-    if (year < currentYear) return false;
-    return true;
-  }, "Must be a valid year"),
+  expMonth: z
+    .string()
+    .min(1, { message: "Required" })
+    .refine((v) => {
+      const month = Number.parseInt(v);
+      if (month < 1) return false;
+      if (month > 12) return false;
+      return true;
+    }, "Must be a valid month"),
+  expYear: z
+    .string()
+    .min(1, { message: "Required" })
+    .refine((v) => {
+      const year = Number.parseInt(v);
+      const currentYear = new Date().getFullYear();
+      if (year < currentYear) return false;
+      return true;
+    }, "Must be a valid year"),
   cvc: z.string().min(3, { message: "Required" }),
 });
 
@@ -132,6 +139,7 @@ export default function Payment() {
 
   async function handleOnlinePayment(type: "gcash" | "paymaya") {
     try {
+      setIsCardSubmitting(true);
       const result = await axios.post<PaymongoPaymentMethodResponse>(
         "https://api.paymongo.com/v1/payment_methods",
         {
@@ -152,12 +160,14 @@ export default function Payment() {
     } catch (error) {
       console.warn(error);
       toast.error("Unable to use online payment");
+    } finally {
+      setIsCardSubmitting(false);
     }
   }
 
   async function handleConfirm() {
     try {
-      await axios.post(
+      const result = await axios.post<SubscriptionInitializeResponse>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/initialize`,
         {
           subscriptionProductId: Number.parseInt(`${selectedProductId}`),
@@ -170,8 +180,12 @@ export default function Payment() {
         }
       );
 
-      toast.success("Payment Successful");
-      router.push("/subscription");
+      if (result.data.redirect_url) {
+        window.location.href = result.data.redirect_url;
+      } else {
+        toast.success("Payment Successful");
+        router.push("/subscription");
+      }
     } catch (error) {
       console.warn(error);
       toast.error("Cannot proceed to payment");
@@ -253,7 +267,7 @@ export default function Payment() {
                       placeholder="John Doe"
                       aria-label="fullName"
                       aria-describedby="billing"
-                      {...register("fullName", { required: true })}
+                      {...register("fullName")}
                       required
                     />
                     {errors.fullName?.message && (
@@ -270,7 +284,7 @@ export default function Payment() {
                           placeholder="@gmail.com"
                           aria-label="email"
                           aria-describedby="billing"
-                          {...register("email", { required: true })}
+                          {...register("email")}
                         />
                         {errors.email?.message && (
                           <p className="validationMessage">
@@ -286,7 +300,7 @@ export default function Payment() {
                           placeholder="09xxxxxxxxx"
                           aria-label="phone"
                           aria-describedby="billing"
-                          {...register("phone", { required: true })}
+                          {...register("phone")}
                         />
                         {errors.phone?.message && (
                           <p className="validationMessage">
@@ -304,7 +318,7 @@ export default function Payment() {
                           placeholder="Unit No. / Street"
                           aria-label="line1"
                           aria-describedby="address"
-                          {...register("line1", { required: true })}
+                          {...register("line1")}
                         />
                         {errors.line1?.message && (
                           <p className="validationMessage">
@@ -320,7 +334,7 @@ export default function Payment() {
                           placeholder="Barangay"
                           aria-label="line2"
                           aria-describedby="address"
-                          {...register("line2", { required: true })}
+                          {...register("line2")}
                         />
                         {errors.line2?.message && (
                           <p className="validationMessage">
@@ -338,7 +352,7 @@ export default function Payment() {
                           placeholder=""
                           aria-label="city"
                           aria-describedby="address"
-                          {...register("city", { required: true })}
+                          {...register("city")}
                         />
                         {errors.city?.message && (
                           <p className="validationMessage">
@@ -348,10 +362,7 @@ export default function Payment() {
                       </div>
                       <div className="col">
                         <span>STATE/REGION</span>
-                        <select
-                          className="form-select"
-                          {...register("state", { required: true })}
-                        >
+                        <select className="form-select" {...register("state")}>
                           <option value="" disabled>
                             Select Region
                           </option>
@@ -389,7 +400,7 @@ export default function Payment() {
                           placeholder=""
                           aria-label="postalCode"
                           aria-describedby="address"
-                          {...register("postalCode", { required: true })}
+                          {...register("postalCode")}
                         />
                         {errors.postalCode?.message && (
                           <p className="validationMessage">
@@ -405,7 +416,7 @@ export default function Payment() {
                           aria-label="country"
                           aria-describedby="address"
                           readOnly
-                          {...register("country", { required: true })}
+                          {...register("country")}
                         />
                         {/* {errors.country?.message && (
                           <p>{errors.country?.message}</p>
@@ -426,7 +437,7 @@ export default function Payment() {
                       placeholder=""
                       aria-label="cardNumber"
                       aria-describedby="card"
-                      {...register("cardNumber", { required: true })}
+                      {...register("cardNumber")}
                     />
                     {errors.cardNumber?.message && (
                       <p className="validationMessage">
@@ -442,11 +453,7 @@ export default function Payment() {
                           placeholder="ex. 11"
                           aria-label="expMonth"
                           aria-describedby="card"
-                          {...register("expMonth", {
-                            required: true,
-                            min: 1,
-                            max: 12,
-                          })}
+                          {...register("expMonth")}
                         />
                         {errors.expMonth?.message && (
                           <p className="validationMessage">
@@ -462,7 +469,7 @@ export default function Payment() {
                           placeholder="ex. 2023"
                           aria-label="expYear"
                           aria-describedby="card"
-                          {...register("expYear", { required: true })}
+                          {...register("expYear")}
                         />
                         {errors.expYear?.message && (
                           <p className="validationMessage">
@@ -478,7 +485,7 @@ export default function Payment() {
                       placeholder=""
                       aria-label="Example text with button addon"
                       aria-describedby="button-addon1"
-                      {...register("cvc", { required: true })}
+                      {...register("cvc")}
                     />
                     {errors.cvc?.message && (
                       <p className="validationMessage">{errors.cvc?.message}</p>
@@ -536,32 +543,6 @@ export default function Payment() {
                 </Modal>
               )}
             </form>
-            {/* Confirmation message */}
-            {/* <div className="modal" id="thirdModal">
-              <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Message Alert</h5>
-                  </div>
-                  <div
-                    className="alert alert-success alert-dismissible fade show"
-                    role="alert"
-                  >
-                    Your entered information has been saved. To verify, please
-                    select the Credit/Debit Card option
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                    >
-                      Exit
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
 

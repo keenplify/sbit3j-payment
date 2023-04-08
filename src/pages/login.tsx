@@ -13,21 +13,32 @@ interface LoginProps {
 }
 
 export default function Login({ response, token }: LoginProps) {
-  const { setAuth, client } = useAuthStore();
+  const { setAuth } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    // Sets the token and client data from the response to the client's auth store (stored locally)
+    async function checkIfSubscribed() {
+      try {
+        await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/current`,
+          {
+            headers: {
+              Authorization: `Bearer ${router.query.token}`,
+            },
+          }
+        );
+        router.push("/subscription");
+      } catch (error) {
+        router.push("/plan");
+      }
+    }
+
     if (!response) return;
     setAuth(token, response.data);
-    router.push("/");
+    checkIfSubscribed();
   }, [response]);
 
-  return (
-    <div>
-      login! <Link href="/payment">Payment page</Link>
-    </div>
-  );
+  return <div>Please wait while we are redirecting you...</div>;
 }
 
 export const getServerSideProps: GetServerSideProps<LoginProps> = async ({
