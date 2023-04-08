@@ -12,6 +12,10 @@ import { PaymongoPaymentMethodResponse } from "@/types/paymongo";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/stores/auth";
 import { SubscriptionInitializeResponse } from "@/types/subscription";
+// @ts-expect-error No import types
+import Cards from "zigu-react-credit-cards";
+
+import "zigu-react-credit-cards/es/styles-compiled.css";
 
 const schema = z.object({
   fullName: z.string().min(1, { message: "Required" }),
@@ -62,6 +66,7 @@ export default function Payment() {
   const {
     register,
     formState: { errors },
+    watch,
     handleSubmit,
     trigger,
   } = useForm<CardSchema>({
@@ -78,6 +83,15 @@ export default function Payment() {
   const [selected, setSelected] = useState<"card" | "gcash" | "maya">("card");
   const [paymentMethodResponse, setPaymentMethodResponse] =
     useState<PaymongoPaymentMethodResponse>();
+
+  const { cardNumber, cvc, expMonth, expYear, fullName } = watch();
+  const [cardFocused, setCardFocused] = useState("");
+
+  useEffect(() => {
+    if (!selectedProductId) {
+      router.push("/plan");
+    }
+  }, [selectedProductId]);
 
   useEffect(() => {
     trigger();
@@ -438,6 +452,9 @@ export default function Payment() {
                       aria-label="cardNumber"
                       aria-describedby="card"
                       {...register("cardNumber")}
+                      onFocus={(event) => {
+                        setCardFocused("number");
+                      }}
                     />
                     {errors.cardNumber?.message && (
                       <p className="validationMessage">
@@ -454,6 +471,9 @@ export default function Payment() {
                           aria-label="expMonth"
                           aria-describedby="card"
                           {...register("expMonth")}
+                          onFocus={(event) => {
+                            setCardFocused("expiry");
+                          }}
                         />
                         {errors.expMonth?.message && (
                           <p className="validationMessage">
@@ -470,6 +490,9 @@ export default function Payment() {
                           aria-label="expYear"
                           aria-describedby="card"
                           {...register("expYear")}
+                          onFocus={(event) => {
+                            setCardFocused("number");
+                          }}
                         />
                         {errors.expYear?.message && (
                           <p className="validationMessage">
@@ -486,10 +509,22 @@ export default function Payment() {
                       aria-label="Example text with button addon"
                       aria-describedby="button-addon1"
                       {...register("cvc")}
+                      onFocus={(event) => {
+                        setCardFocused("cvc");
+                      }}
                     />
                     {errors.cvc?.message && (
                       <p className="validationMessage">{errors.cvc?.message}</p>
                     )}
+                    <div style={{ margin: "2em 0" }}>
+                      <Cards
+                        cvc={cvc ?? ""}
+                        expiry={`${expMonth}/${expYear}`}
+                        name={fullName ?? ""}
+                        number={cardNumber ?? ""}
+                        focused={cardFocused ?? ""}
+                      />
+                    </div>
                   </div>
                   <div className="modal-footer">
                     {cardPage === 1 ? (
