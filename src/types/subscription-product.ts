@@ -1,3 +1,8 @@
+export interface SubscriptionProductResponse {
+    data: SubscriptionProduct[]
+}
+
+
 export interface SubscriptionProduct {
     id: number,
     title: string
