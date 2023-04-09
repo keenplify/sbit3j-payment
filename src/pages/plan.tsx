@@ -3,11 +3,12 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import axios from "axios";
 import { usePlanStore } from "../stores/plan";
+import { useRouter } from "next/router";
 
 export default function Plan() {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [selectedId, setSelectedId] = useState(1);
-  console.log(selectedId);
+  const router = useRouter();
 
   const checkButtons1 = () => {
     const buttons = document.querySelectorAll("button[aria-expanded]");
@@ -462,18 +463,16 @@ export default function Plan() {
               className="btn btn-primary p-2 mt-2 rounded-4"
               type="submit"
               disabled={isSubmitDisabled}
-            >
-              <Link
-                href={{
+              onClick={() => {
+                router.push({
                   pathname: "/payment",
                   query: {
                     selectedId,
                   },
-                }}
-              >
-                {" "}
-                <span className="text-white"> GET STARTED </span>
-              </Link>
+                });
+              }}
+            >
+              <span className="text-white"> GET STARTED </span>
             </button>
           }
           <p>Selected Button: {selectedId}</p>
