@@ -6,9 +6,11 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
   const {
     register,
     formState: { errors },
@@ -18,6 +20,7 @@ export default function Home() {
   });
 
   const onSubmit = handleSubmit(async (data) => {
+    setSubmitting(true);
     try {
       const response = await axios.post<Response<Client, "auth">>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/auth/login`,
@@ -33,6 +36,8 @@ export default function Home() {
     } catch (error) {
       console.warn(error);
       toast.error("Unable to login. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   });
 
@@ -80,8 +85,19 @@ export default function Home() {
                 <small className="text-danger">{errors.password.message}</small>
               )}
             </div>
-            <button type="submit" className="btn btn-primary my-2 w-100">
-              Submit
+            <button
+              type="submit"
+              className="btn btn-primary my-2 w-100"
+              disabled={submitting}
+            >
+              {submitting ? (
+                <div
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                />
+              ) : (
+                "Submit"
+              )}
             </button>
           </form>
         </div>
