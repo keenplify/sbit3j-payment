@@ -17,6 +17,8 @@ import Cards from "zigu-react-credit-cards";
 
 import "zigu-react-credit-cards/es/styles-compiled.css";
 
+import { Client } from "@/types/client";
+
 const schema = z.object({
   fullName: z.string().min(1, { message: "Required" }),
   line1: z.string().min(1, { message: "Required" }),
@@ -73,6 +75,9 @@ export default function Payment() {
     resolver: zodResolver(schema),
     defaultValues: {
       country: "PH",
+      fullName: "John Doe",
+      email: "johndoe@gmail.com",
+      phone: "09120281177",
     },
   });
   const router = useRouter();
@@ -221,6 +226,7 @@ export default function Payment() {
       <div className="m-4">
         <h1>Payment Methods</h1>
         <p>Choose your payment method below</p>
+        <hr />
       </div>
 
       <div className="m-4 accordion" id="accordionExample">
@@ -259,6 +265,7 @@ export default function Payment() {
                   : "Credit / Debit Card"}
               </button>
             </div>
+
             <form onSubmit={submitCard}>
               {/* Billing Info */}
               {cardPage && cardPage > 0 && (
@@ -309,7 +316,8 @@ export default function Payment() {
                       <div className="col">
                         <span>PHONE NUMBER</span>
                         <input
-                          type="number"
+                          type="tel"
+                          maxLength={11}
                           className="form-control"
                           placeholder="09xxxxxxxxx"
                           aria-label="phone"
@@ -409,11 +417,12 @@ export default function Payment() {
                       <div className="col">
                         <span>POSTAL CODE</span>
                         <input
-                          type="number"
+                          type="tel"
                           className="form-control"
                           placeholder=""
                           aria-label="postalCode"
                           aria-describedby="address"
+                          maxLength={4}
                           {...register("postalCode")}
                         />
                         {errors.postalCode?.message && (
@@ -446,7 +455,8 @@ export default function Payment() {
                   >
                     <span>CARD NUMBER</span>
                     <input
-                      type="number"
+                      type="tel"
+                      maxLength={16}
                       className="form-control"
                       placeholder=""
                       aria-label="cardNumber"
@@ -461,13 +471,14 @@ export default function Payment() {
                         {errors.cardNumber?.message}
                       </p>
                     )}
-                    <div className="row">
-                      <div className="col">
+                    <div className="row mt-4">
+                      <div className="col-4">
                         <span>EXP. MONTH</span>
                         <input
-                          type="number"
+                          type="tel"
+                          maxLength={2}
                           className="form-control"
-                          placeholder="ex. 11"
+                          placeholder="ex. 01 or 11"
                           aria-label="expMonth"
                           aria-describedby="card"
                           {...register("expMonth")}
@@ -481,10 +492,11 @@ export default function Payment() {
                           </p>
                         )}
                       </div>
-                      <div className="col">
+                      <div className="col-4">
                         <span>EXP. YEAR</span>
                         <input
-                          type="number"
+                          type="text"
+                          maxLength={4}
                           className="form-control"
                           placeholder="ex. 2023"
                           aria-label="expYear"
@@ -500,22 +512,27 @@ export default function Payment() {
                           </p>
                         )}
                       </div>
+                      <div className="col-4">
+                        <span>CVC NO.</span>
+                        <input
+                          type="tel"
+                          maxLength={3}
+                          className="form-control"
+                          placeholder=""
+                          aria-label="Example text with button addon"
+                          aria-describedby="button-addon1"
+                          {...register("cvc")}
+                          onFocus={(event) => {
+                            setCardFocused("cvc");
+                          }}
+                        />
+                        {errors.cvc?.message && (
+                          <p className="validationMessage">
+                            {errors.cvc?.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <span>CVC NUMBER</span>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder=""
-                      aria-label="Example text with button addon"
-                      aria-describedby="button-addon1"
-                      {...register("cvc")}
-                      onFocus={(event) => {
-                        setCardFocused("cvc");
-                      }}
-                    />
-                    {errors.cvc?.message && (
-                      <p className="validationMessage">{errors.cvc?.message}</p>
-                    )}
                     <div style={{ margin: "2em 0" }}>
                       <Cards
                         cvc={cvc ?? ""}

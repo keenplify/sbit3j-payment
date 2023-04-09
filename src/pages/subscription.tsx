@@ -6,6 +6,7 @@ import { SubscriptionResponse } from "@/types/subscription";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { NumericFormat } from "react-number-format";
+import { BsArrowRepeat, BsPlusLg } from "react-icons/bs";
 
 export default function Subscription() {
   const { token } = useAuthStore();
@@ -39,6 +40,7 @@ export default function Subscription() {
 
       <div className="m-4">
         <h1>Subscription</h1>
+        <hr />
 
         <div style={{ textAlign: "right" }}>
           <button
@@ -46,28 +48,42 @@ export default function Subscription() {
             type="submit"
             onClick={() => refetch()}
           >
-            FETCH
+            <BsArrowRepeat
+              style={{
+                padding: 0,
+                fontSize: 25,
+              }}
+            />
           </button>
 
-          <Link href="/plan" className="btn btn-primary">
-            ADD
+          <Link href="/plan" className="btn btn-primary me-2">
+            <BsPlusLg
+              style={{
+                padding: 0,
+                fontSize: 25,
+              }}
+            />
           </Link>
         </div>
 
-        <div className="table-responsive mt-4">
-          <table className="table table-sm">
+        <div className="table-responsive mt-3">
+          <table className="table">
             <thead>
               <tr>
                 <th scope="col">Type</th>
                 <th scope="col">Price</th>
-                <th scope="col">Start</th>
                 <th scope="col">End</th>
                 <th scope="col">Status</th>
               </tr>
             </thead>
             <tbody>
               {data?.data.data.map((subscription, key) => (
-                <tr key={key}>
+                <tr
+                  key={key}
+                  className={
+                    subscription.isActive ? "text-dark" : "text-secondary"
+                  }
+                >
                   <th scope="row">{subscription.subscriptionProduct.title}</th>
                   <td>
                     <NumericFormat
@@ -78,9 +94,17 @@ export default function Subscription() {
                       decimalScale={0}
                     />
                   </td>
-                  <td>{dayjs(subscription.startAt).format("M/D/YYYY")}</td>
                   <td>{dayjs(subscription.endAt).format("M/D/YYYY")}</td>
-                  <td>{subscription.isActive ? "Active" : "Inactive"}</td>
+                  <td
+                    className={
+                      subscription.isActive
+                        ? "badge text-bg-success"
+                        : "badge text-bg-danger"
+                    }
+                    style={{ marginTop: 5, marginBottom: 5 }}
+                  >
+                    {subscription.isActive ? "Active" : "Inactive"}
+                  </td>
                 </tr>
               ))}
             </tbody>
