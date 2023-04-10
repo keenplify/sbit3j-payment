@@ -17,8 +17,6 @@ import Cards from "zigu-react-credit-cards";
 
 import "zigu-react-credit-cards/es/styles-compiled.css";
 
-import { Client } from "@/types/client";
-
 const schema = z.object({
   fullName: z.string().min(1, { message: "Required" }),
   line1: z.string().min(1, { message: "Required" }),
@@ -65,8 +63,11 @@ const schema = z.object({
 type CardSchema = z.infer<typeof schema>;
 
 export default function Payment() {
+  const { token, client } = useAuthStore();
+
   const {
     register,
+    setValue,
     formState: { errors },
     watch,
     handleSubmit,
@@ -75,13 +76,16 @@ export default function Payment() {
     resolver: zodResolver(schema),
     defaultValues: {
       country: "PH",
-      fullName: "John Doe",
-      email: "johndoe@gmail.com",
-      phone: "09120281177",
+      fullName: `${client?.firstName ?? ""} ${client?.middleName ?? ""} ${
+        client?.lastName ?? ""
+      }`,
+      email: client?.email,
+      phone: client?.phone.replace("+639", "09"),
     },
   });
+
   const router = useRouter();
-  const { token } = useAuthStore();
+
   const { selectedId: selectedProductId } = router.query;
   const [cardPage, setCardPage] = useState<number>();
   const [isCardSubmitting, setIsCardSubmitting] = useState(false);
@@ -186,6 +190,7 @@ export default function Payment() {
 
   async function handleConfirm() {
     try {
+      setIsCardSubmitting(true);
       const result = await axios.post<SubscriptionInitializeResponse>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/initialize`,
         {
@@ -206,6 +211,7 @@ export default function Payment() {
         router.push("/subscription");
       }
     } catch (error) {
+      setIsCardSubmitting(false);
       console.warn(error);
       toast.error("Cannot proceed to payment");
     }
@@ -214,10 +220,10 @@ export default function Payment() {
   return (
     <div>
       <div className="m-4">
-        <Link href="/login">
+        <Link href="/plan">
           <button
             type="button"
-            className="btn-close"
+            className="btn-close1"
             aria-label="Close"
           ></button>
         </Link>
@@ -231,6 +237,7 @@ export default function Payment() {
 
       <div className="m-4 accordion" id="accordionExample">
         {/* Credit / Debit Card */}
+
         <div>
           <div
             className="accordion-item mb-4 rounded-2 shadow bg-body rounded"
@@ -282,6 +289,7 @@ export default function Payment() {
                     }}
                   >
                     <span>FULL NAME</span>
+
                     <input
                       type="text"
                       className="form-control"
@@ -291,6 +299,7 @@ export default function Payment() {
                       {...register("fullName")}
                       required
                     />
+
                     {errors.fullName?.message && (
                       <p className="validationMessage">
                         {errors.fullName?.message}
@@ -331,6 +340,7 @@ export default function Payment() {
                         )}
                       </div>
                     </div>
+
                     <div className="row">
                       <div className="col">
                         <span>LINE 1</span>
@@ -495,7 +505,7 @@ export default function Payment() {
                       <div className="col-4">
                         <span>EXP. YEAR</span>
                         <input
-                          type="text"
+                          type="tel"
                           maxLength={4}
                           className="form-control"
                           placeholder="ex. 2023"

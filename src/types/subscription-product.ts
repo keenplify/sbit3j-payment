@@ -6,7 +6,7 @@ export interface SubscriptionProductResponse {
 export interface SubscriptionProduct {
     id: number,
     title: string
-    description: string | null
+    description: string[] | null
     price: string
     duration: string
     durationISO: string

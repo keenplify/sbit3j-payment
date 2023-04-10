@@ -43,18 +43,20 @@ export default function Subscription() {
         <hr />
 
         <div style={{ textAlign: "right" }}>
-          <button
-            className="btn btn-primary me-2"
-            type="submit"
-            onClick={() => refetch()}
-          >
-            <BsArrowRepeat
-              style={{
-                padding: 0,
-                fontSize: 25,
-              }}
-            />
-          </button>
+          <Link href="/subscription">
+            <button
+              className="btn btn-primary me-2"
+              type="submit"
+              onClick={() => refetch()}
+            >
+              <BsArrowRepeat
+                style={{
+                  padding: 0,
+                  fontSize: 25,
+                }}
+              />
+            </button>
+          </Link>
 
           <Link href="/plan" className="btn btn-primary me-2">
             <BsPlusLg
@@ -95,15 +97,12 @@ export default function Subscription() {
                     />
                   </td>
                   <td>{dayjs(subscription.endAt).format("M/D/YYYY")}</td>
-                  <td
-                    className={
-                      subscription.isActive
-                        ? "badge text-bg-success"
-                        : "badge text-bg-danger"
-                    }
-                    style={{ marginTop: 5, marginBottom: 5 }}
-                  >
-                    {subscription.isActive ? "Active" : "Inactive"}
+                  <td>
+                    {subscription.isActive ? (
+                      <span className="badge text-bg-success">Active</span>
+                    ) : (
+                      <span className="badge text-bg-danger ">Inactive</span>
+                    )}
                   </td>
                 </tr>
               ))}
