@@ -16,7 +16,6 @@ import { SubscriptionInitializeResponse } from "@/types/subscription";
 import Cards from "zigu-react-credit-cards";
 
 import "zigu-react-credit-cards/es/styles-compiled.css";
-import { Client } from "@/types/client";
 
 const schema = z.object({
   fullName: z.string().min(1, { message: "Required" }),
@@ -64,25 +63,6 @@ const schema = z.object({
 type CardSchema = z.infer<typeof schema>;
 
 export default function Payment() {
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    axios
-      .get<Client>(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/auth/check`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        setEmail(response.data.email);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
   const { token, client } = useAuthStore();
 
   const {
@@ -96,7 +76,11 @@ export default function Payment() {
     resolver: zodResolver(schema),
     defaultValues: {
       country: "PH",
+      fullName: `${client?.firstName ?? ""} ${client?.middleName ?? ""} ${
+        client?.lastName ?? ""
+      }`,
       email: client?.email,
+      phone: client?.phone.replace("+639", "09"),
     },
   });
 
@@ -206,6 +190,7 @@ export default function Payment() {
 
   async function handleConfirm() {
     try {
+      setIsCardSubmitting(true);
       const result = await axios.post<SubscriptionInitializeResponse>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/subscriptions/initialize`,
         {
@@ -226,6 +211,7 @@ export default function Payment() {
         router.push("/subscription");
       }
     } catch (error) {
+      setIsCardSubmitting(false);
       console.warn(error);
       toast.error("Cannot proceed to payment");
     }
