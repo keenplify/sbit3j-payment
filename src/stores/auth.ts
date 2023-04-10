@@ -2,7 +2,7 @@ import { Client } from '@/types/client'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-interface AuthStore {
+export interface AuthStore {
     token?: string
     client?: Client
     setAuth: (token: string, client: Client) => void

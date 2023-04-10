@@ -16,7 +16,6 @@ import { SubscriptionInitializeResponse } from "@/types/subscription";
 import Cards from "zigu-react-credit-cards";
 
 import "zigu-react-credit-cards/es/styles-compiled.css";
-
 import { Client } from "@/types/client";
 
 const schema = z.object({
@@ -65,8 +64,30 @@ const schema = z.object({
 type CardSchema = z.infer<typeof schema>;
 
 export default function Payment() {
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    axios
+      .get<Client>(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/client/auth/check`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        setEmail(response.data.email);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+  const { token, client } = useAuthStore();
+
   const {
     register,
+    setValue,
     formState: { errors },
     watch,
     handleSubmit,
@@ -75,13 +96,12 @@ export default function Payment() {
     resolver: zodResolver(schema),
     defaultValues: {
       country: "PH",
-      fullName: "John Doe",
-      email: "johndoe@gmail.com",
-      phone: "09120281177",
+      email: client?.email,
     },
   });
+
   const router = useRouter();
-  const { token } = useAuthStore();
+
   const { selectedId: selectedProductId } = router.query;
   const [cardPage, setCardPage] = useState<number>();
   const [isCardSubmitting, setIsCardSubmitting] = useState(false);
@@ -214,10 +234,10 @@ export default function Payment() {
   return (
     <div>
       <div className="m-4">
-        <Link href="/login">
+        <Link href="/plan">
           <button
             type="button"
-            className="btn-close"
+            className="btn-close1"
             aria-label="Close"
           ></button>
         </Link>
@@ -231,6 +251,7 @@ export default function Payment() {
 
       <div className="m-4 accordion" id="accordionExample">
         {/* Credit / Debit Card */}
+
         <div>
           <div
             className="accordion-item mb-4 rounded-2 shadow bg-body rounded"
@@ -282,6 +303,7 @@ export default function Payment() {
                     }}
                   >
                     <span>FULL NAME</span>
+
                     <input
                       type="text"
                       className="form-control"
@@ -291,6 +313,7 @@ export default function Payment() {
                       {...register("fullName")}
                       required
                     />
+
                     {errors.fullName?.message && (
                       <p className="validationMessage">
                         {errors.fullName?.message}
@@ -331,6 +354,7 @@ export default function Payment() {
                         )}
                       </div>
                     </div>
+
                     <div className="row">
                       <div className="col">
                         <span>LINE 1</span>
@@ -495,7 +519,7 @@ export default function Payment() {
                       <div className="col-4">
                         <span>EXP. YEAR</span>
                         <input
-                          type="text"
+                          type="tel"
                           maxLength={4}
                           className="form-control"
                           placeholder="ex. 2023"
