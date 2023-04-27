@@ -142,7 +142,7 @@ export default function Plan() {
             <span className="text-white"> GET STARTED </span>
           </button>
         }
-        <p>Selected Button: {selectedId}</p>
+        {/* <p>Selected Button: {selectedId}</p> */}
       </div>
     </div>
   );
