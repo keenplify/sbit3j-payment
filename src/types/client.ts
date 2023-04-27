@@ -6,6 +6,11 @@ export interface Client extends Model {
     "lastName": string,
     "email": string,
     "phone": string,
+    "line1": string,
+    "line2": string,
+    "city": string,
+    "state": string,
+    "postalCode": string,
 }
 
 export interface BackendAccess {
