@@ -12,9 +12,9 @@ export const useAuthStore = create(
     persist<AuthStore>(
       (set) => ({
         setAuth: (token, client) =>  set((v) => ({
+            ...v,
             token,
             client,
-            ...v
         }))
       }),
       {
