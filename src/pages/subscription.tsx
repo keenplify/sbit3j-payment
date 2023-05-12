@@ -29,16 +29,6 @@ export default function Subscription() {
   return (
     <div>
       <div className="m-4">
-        <Link href="/login">
-          <button
-            type="button"
-            className="btn-close"
-            aria-label="Close"
-          ></button>
-        </Link>
-      </div>
-
-      <div className="m-4">
         <h1>Subscription</h1>
         <hr />
 
